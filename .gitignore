@@ -22,3 +22,7 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+
+# my files
+Nuovo Documento di testo.txt
+package-lock.json
