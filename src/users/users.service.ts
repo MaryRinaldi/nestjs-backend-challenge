@@ -3,11 +3,13 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
@@ -51,4 +53,38 @@ export class UsersService {
     this.logger.log(`Searching for user with email: ${email}`);
     return this.userModel.findOne({ email }).exec();
   }
+
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserDocument> {
+        this.logger.log(`Attempting to update profile for user ID: ${id}`);
+
+        // email e password esclusi dal DTO
+        const { email, password, ...updateData } = updateUserDto;
+
+        const updatedUser = await this.userModel.findByIdAndUpdate(
+            id,
+            { $set: updateData },
+            { new: true, runValidators: true },
+        ).exec();
+
+        if (!updatedUser) {
+            this.logger.error(`Update failed. User with ID: ${id} not found.`);
+            throw new NotFoundException(`Utente con ID ${id} non trovato.`);
+        }
+
+        this.logger.log(`User profile with ID: ${id} updated successfully.`);
+        return updatedUser;
+    }
+
+  async remove(id: string): Promise<void> {
+        this.logger.log(`Attempting to delete user with ID: ${id}`);
+        const result = await this.userModel.findByIdAndDelete(id).exec();
+        
+        if (!result) {
+            this.logger.error(`Delete failed. User with ID: ${id} not found.`);
+            throw new NotFoundException(`Utente con ID ${id} non trovato.`);
+        }
+
+        this.logger.log(`User with ID: ${id} deleted successfully.`);
+    }
+
 }

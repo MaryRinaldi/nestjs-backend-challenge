@@ -26,7 +26,7 @@ export class CreateUserDto {
 
   @IsDateString({}, { message: 'La data di nascita deve essere una data valida (es. YYYY-MM-DD).' })
   @IsNotEmpty({ message: 'La data di nascita non può essere vuota.' })
-  dataDiNascita: Date;
+  dataDiNascita: string;
 
   @IsString()
   @IsNotEmpty({ message: 'La città di origine non può essere vuota.' })
