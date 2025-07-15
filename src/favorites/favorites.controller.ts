@@ -4,11 +4,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { CreateFavoriteDto } from './dto/create-favorite.dto';
 import { UserDocument } from 'src/users/schemas/user.schema';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Favorites - Monitoraggio Progetti Personali')
 @Controller('favorites')
 @UseGuards(AuthGuard('jwt')) // routes protette
+@ApiBearerAuth()
 export class FavoritesController {
   private readonly logger = new Logger(FavoritesController.name);
 

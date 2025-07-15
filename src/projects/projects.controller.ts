@@ -4,7 +4,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles, Role } from 'src/auth/decorators/roles.decorator';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Projects - Gestione Progetti')
 @Controller('projects')
@@ -16,6 +16,7 @@ export class ProjectsController {
   @Post()
   @Roles(Role.Admin) // solo gli Admin possono creare progetti
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @ApiBearerAuth()
   create(@Body() createProjectDto: CreateProjectDto) {
     this.logger.log(`Received request to create project: ${createProjectDto.nome}`);
     return this.projectsService.create(createProjectDto);
@@ -28,7 +29,7 @@ export class ProjectsController {
   }
 
   @Get('search') // cerca per nome e/o linguaggio
-  @ApiOperation({ summary: 'Cerca progetti per nome o disciplina (es. ?nome=ponte&linguaggio=civile)' })
+  @ApiOperation({ summary: 'Cerca progetti per nome o disciplina' })
   searchProjects(
     @Query('nome') nome: string,
     @Query('linguaggio') linguaggio: string) {

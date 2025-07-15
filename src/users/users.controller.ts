@@ -7,7 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles, Role } from '../auth/decorators/roles.decorator';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users - Gestione Utenti')
 @Controller('users') // prefisso di route a /users
@@ -29,6 +29,8 @@ export class UsersController {
 
   @Get('/profile')
   @UseGuards(AuthGuard('jwt')) //protezione route
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Recupera il profilo dell\'utente autenticato' })
   getProfile(@Req() req: Request) {
 
     const user = req.user! as UserDocument;
@@ -40,6 +42,7 @@ export class UsersController {
 
   @Patch('/profile')
     @UseGuards(AuthGuard('jwt')) // protezione route
+    @ApiBearerAuth()
     async updateProfile(@Req() req: Request, @Body() updateUserDto: UpdateUserDto) {
         // gli utenti possono modificare solo il proprio profilo
         const user = req.user! as UserDocument;
@@ -56,6 +59,7 @@ export class UsersController {
 
   @Delete('/profile')
     @UseGuards(AuthGuard('jwt'))
+    @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteProfile(@Req() req: Request) { 
         
@@ -70,6 +74,7 @@ export class UsersController {
  @Get()
   @Roles(Role.Admin) 
   @UseGuards(AuthGuard('jwt'), RolesGuard) 
+  @ApiBearerAuth()
   async findAll() {
     this.logger.log('Admin request to find all users');
     const users = await this.usersService.findAll();

@@ -13,10 +13,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
   ) {
+    const jwtSecret = configService.get<string>('JWT_SECRET');
+      if (!jwtSecret) {
+      throw new Error('JWT_SECRET non è definito nel file .env. L\'applicazione non può avviarsi in modo sicuro.');
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET'),
+      secretOrKey: jwtSecret,
     });
     this.logger.log('JwtStrategy initialized');
   }
