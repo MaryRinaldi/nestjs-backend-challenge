@@ -7,7 +7,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles, Role } from '../auth/decorators/roles.decorator';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users - Gestione Utenti')
 @Controller('users') // prefisso di route a /users
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
@@ -15,6 +17,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/register') // richieste POST a /users/register
+  @ApiOperation({ summary: 'Registra un nuovo ingegnere/utente sulla piattaforma' })
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     const user = await this.usersService.create(createUserDto);

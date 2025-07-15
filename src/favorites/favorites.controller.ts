@@ -4,7 +4,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { CreateFavoriteDto } from './dto/create-favorite.dto';
 import { UserDocument } from 'src/users/schemas/user.schema';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Favorites - Monitoraggio Progetti Personali')
 @Controller('favorites')
 @UseGuards(AuthGuard('jwt')) // routes protette
 export class FavoritesController {
@@ -13,6 +15,7 @@ export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Aggiunge un progetto alla lista di monitoraggio personale' })
   add(@Body() createFavoriteDto: CreateFavoriteDto, @Req() req: Request) {
     const user = req.user! as UserDocument
     const userId = user._id.toString();
@@ -20,6 +23,7 @@ export class FavoritesController {
   }
 
   @Get()
+  @ApiOperation({ summary: "Recupera la lista dei progetti monitorati dall'utente" })
   findAllForUser(@Req() req: Request) {
     const user = req.user! as UserDocument
     const userId = user._id.toString();

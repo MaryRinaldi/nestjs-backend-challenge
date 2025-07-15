@@ -4,7 +4,9 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles, Role } from 'src/auth/decorators/roles.decorator';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Projects - Gestione Progetti')
 @Controller('projects')
 export class ProjectsController {
   private readonly logger = new Logger(ProjectsController.name);
@@ -26,6 +28,7 @@ export class ProjectsController {
   }
 
   @Get('search') // cerca per nome e/o linguaggio
+  @ApiOperation({ summary: 'Cerca progetti per nome o disciplina (es. ?nome=ponte&linguaggio=civile)' })
   searchProjects(
     @Query('nome') nome: string,
     @Query('linguaggio') linguaggio: string) {
@@ -35,6 +38,7 @@ export class ProjectsController {
 
   // DOPO '/search', altrimenti 'search' verrebbe interpretato come un ID
   @Get(':id')
+  @ApiOperation({ summary: 'Recupera i dettagli tecnici di un singolo progetto' })
   findOne(@Param('id') id: string) {
     this.logger.log(`Received request for project with ID: ${id}`);
     return this.projectsService.findOne(id);
