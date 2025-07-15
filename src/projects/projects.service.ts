@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -21,5 +21,29 @@ export class ProjectsService {
   async findAll(): Promise<ProjectDocument[]> {
     this.logger.log('Fetching all projects');
     return this.projectModel.find().exec();
+  }
+
+   async findOne(id: string): Promise<ProjectDocument> {
+    this.logger.log(`Fetching project with ID: ${id}`);
+    const project = await this.projectModel.findById(id).exec();
+    if (!project) {
+      throw new NotFoundException(`Progetto con ID ${id} non trovato.`);
+    }
+    return project;
+  }
+
+  async search(name?: string, language?: string): Promise<ProjectDocument[]> {
+    this.logger.log(`Searching for projects with: "${name}" and "${language}"`);
+    const searchQuery : any = {};
+    if (name) {
+        searchQuery.name = { $regex: name, $options: 'i'}
+    }
+    if (language) {
+        searchQuery.languages = { $regex: language, $options: 'i'}
+    }
+    if (Object.keys(searchQuery).length === 0) {
+        return [];
+    }
+    return this.projectModel.find(searchQuery).exec();
   }
 }

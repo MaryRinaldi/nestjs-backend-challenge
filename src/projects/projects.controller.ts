@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Logger, Param, Query } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -23,5 +23,20 @@ export class ProjectsController {
   findAll() {
     this.logger.log('Received request to find all projects');
     return this.projectsService.findAll();
+  }
+
+  @Get('search') // cerca per nome e/o linguaggio
+  searchProjects(
+    @Query('name') name: string,
+    @Query('language') language: string) {
+    this.logger.log(`Received search request with query: "${name}" and ${language}`);
+    return this.projectsService.search(name, language);
+  }
+
+  // DOPO '/search', altrimenti 'search' verrebbe interpretato come un ID
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    this.logger.log(`Received request for project with ID: ${id}`);
+    return this.projectsService.findOne(id);
   }
 }
