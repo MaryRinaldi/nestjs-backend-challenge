@@ -87,4 +87,9 @@ export class UsersService {
         this.logger.log(`User with ID: ${id} deleted successfully.`);
     }
 
+  async findAll(): Promise<UserDocument[]> {
+    this.logger.log('Fetching all users from the database.');
+    return this.userModel.find().exec();
+  }
+
 }
