@@ -27,10 +27,10 @@ export class ProjectsController {
 
   @Get('search') // cerca per nome e/o linguaggio
   searchProjects(
-    @Query('name') name: string,
-    @Query('language') language: string) {
-    this.logger.log(`Received search request with query: "${name}" and ${language}`);
-    return this.projectsService.search(name, language);
+    @Query('nome') nome: string,
+    @Query('linguaggio') linguaggio: string) {
+    this.logger.log(`Received search request with query: "${nome}" and ${linguaggio}`);
+    return this.projectsService.search(nome, linguaggio);
   }
 
   // DOPO '/search', altrimenti 'search' verrebbe interpretato come un ID

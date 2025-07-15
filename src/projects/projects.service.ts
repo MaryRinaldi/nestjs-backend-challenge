@@ -32,14 +32,14 @@ export class ProjectsService {
     return project;
   }
 
-  async search(name?: string, language?: string): Promise<ProjectDocument[]> {
-    this.logger.log(`Searching for projects with: "${name}" and "${language}"`);
+  async search(nome?: string, linguaggio?: string): Promise<ProjectDocument[]> {
+    this.logger.log(`Searching for projects with: "${nome}" and "${linguaggio}"`);
     const searchQuery : any = {};
-    if (name) {
-        searchQuery.name = { $regex: name, $options: 'i'}
+    if (nome) {
+        searchQuery.nome = { $regex: nome, $options: 'i'}
     }
-    if (language) {
-        searchQuery.languages = { $regex: language, $options: 'i'}
+    if (linguaggio) {
+        searchQuery.linguaggi = { $regex: linguaggio, $options: 'i'}
     }
     if (Object.keys(searchQuery).length === 0) {
         return [];
